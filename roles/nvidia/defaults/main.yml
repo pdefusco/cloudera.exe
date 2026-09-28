@@ -1,0 +1,36 @@
+# Copyright 2025 Cloudera, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+
+# The open-source kernel module flavour supports Turing (RTX 20xx / T4) and
+# newer GPUs, which includes the A10G, A100, L4, L40S and H100. For Volta,
+# Pascal or Maxwell hardware, override with "kmod-nvidia-latest-dkms".
+nvidia_kmod_package: "kmod-nvidia-open-dkms"
+
+# Install the NVIDIA Container Toolkit so container runtimes (containerd,
+# CRI-O, Docker) can expose GPUs to workloads.
+nvidia_container_toolkit_enabled: true
+
+# nvidia_crb_repo_name:
+# nvidia_epel_rpm:
+# nvidia_python_packages:
+# nvidia_build_packages:
+# nvidia_driver_packages:
+# nvidia_repo_name:
+# nvidia_repo_baseurl:
+# nvidia_repo_gpgkey:
+# nvidia_container_toolkit_packages:
+# nvidia_container_toolkit_repo_name:
+# nvidia_container_toolkit_repo_baseurl:
+# nvidia_container_toolkit_repo_gpgkey:

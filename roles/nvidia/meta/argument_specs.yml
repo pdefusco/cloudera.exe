@@ -1,0 +1,103 @@
+# Copyright 2025 Cloudera, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+
+argument_specs:
+  main:
+    short_description: Provision NVIDIA GPU drivers
+    description: |
+      Install and configure a host for NVIDIA GPU drivers, the CUDA userspace
+      binaries (including C(nvidia-smi)), and optionally the NVIDIA Container
+      Toolkit.
+    author: Cloudera Labs
+    version_added: "3.3.0"
+    options:
+      nvidia_kmod_package:
+        description:
+          - Kernel module package providing the NVIDIA driver.
+          - The open flavour requires a Turing or newer GPU.
+        type: str
+        required: false
+        default: "kmod-nvidia-open-dkms"
+      nvidia_container_toolkit_enabled:
+        description:
+          - Whether to provision the NVIDIA Container Toolkit and its repository.
+        type: bool
+        required: false
+        default: true
+      nvidia_crb_repo_name:
+        description:
+          - CodeReady repository name to enable (Red Hat)
+        type: str
+        required: false
+      nvidia_epel_rpm:
+        description:
+          - EPEL RPM to install (Red Hat)
+        type: str
+        required: false
+      nvidia_python_packages:
+        description:
+          - System Python packages to install
+        type: list
+        elements: str
+        required: false
+      nvidia_build_packages:
+        description:
+          - Packages required to build the DKMS kernel module, including the
+            kernel headers matching the running kernel (Red Hat)
+        type: list
+        elements: str
+        required: false
+      nvidia_driver_packages:
+        description:
+          - NVIDIA driver and CUDA userspace packages to install
+        type: list
+        elements: str
+        required: false
+      nvidia_repo_name:
+        description:
+          - Name (identifier) of the NVIDIA CUDA repository (Red Hat)
+        type: str
+        required: false
+      nvidia_repo_baseurl:
+        description:
+          - URL of the NVIDIA CUDA repository (Red Hat)
+        type: str
+        required: false
+      nvidia_repo_gpgkey:
+        description:
+          - URL of the NVIDIA CUDA repository GPG key (Red Hat)
+        type: str
+        required: false
+      nvidia_container_toolkit_packages:
+        description:
+          - NVIDIA Container Toolkit packages to install
+        type: list
+        elements: str
+        required: false
+      nvidia_container_toolkit_repo_name:
+        description:
+          - Name (identifier) of the NVIDIA Container Toolkit repository (Red Hat)
+        type: str
+        required: false
+      nvidia_container_toolkit_repo_baseurl:
+        description:
+          - URL of the NVIDIA Container Toolkit repository (Red Hat)
+        type: str
+        required: false
+      nvidia_container_toolkit_repo_gpgkey:
+        description:
+          - URL of the NVIDIA Container Toolkit repository GPG key (Red Hat)
+        type: str
+        required: false

@@ -1,0 +1,55 @@
+# Copyright 2025 Cloudera, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Check NVIDIA kernel-mode drivers
+      ansible.builtin.command: dkms status
+      register: __kernel
+      failed_when: __kernel.rc != 0
+      changed_when: false
+
+    - name: Assert the NVIDIA kernel module is installed
+      ansible.builtin.assert:
+        that:
+          - __kernel.stdout is search('nvidia')
+          - __kernel.stdout is search('installed')
+        fail_msg: >-
+          The NVIDIA DKMS kernel module is not installed.
+          dkms status reported: {{ __kernel.stdout }}
+
+    - name: Check the nouveau driver is not loaded
+      ansible.builtin.command: lsmod
+      register: __lsmod
+      changed_when: false
+
+    - name: Assert nouveau is not bound to the GPU
+      ansible.builtin.assert:
+        that:
+          - __lsmod.stdout is not search('nouveau')
+        fail_msg: The nouveau driver is still loaded and will block the NVIDIA driver.
+
+    - name: Check the NVIDIA System Management Interface
+      ansible.builtin.command: nvidia-smi
+      register: __smi
+      failed_when: __smi.rc != 0
+      changed_when: false
+
+    - name: Check the NVIDIA Container Toolkit
+      ansible.builtin.command: nvidia-ctk --version
+      register: __ctk
+      failed_when: __ctk.rc != 0
+      changed_when: false

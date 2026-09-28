@@ -1,0 +1,63 @@
+# Copyright 2025 Cloudera, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+- name: Enable the CodeReady repository
+  community.general.dnf_config_manager:
+    name: "{{ nvidia_crb_repo_name | default(_nvidia_crb_repo_name) }}"
+    state: enabled
+
+- name: Install the EPEL RPM
+  ansible.builtin.dnf:
+    name: "{{ nvidia_epel_rpm | default(_nvidia_epel_rpm) }}"
+    state: present
+    disable_gpg_check: true
+  notify: Clean DNF
+
+- name: Install required Python libraries
+  ansible.builtin.dnf:
+    name: "{{ nvidia_python_packages | default(_nvidia_python_packages) }}"
+    state: present
+
+- name: Install the DKMS kernel module build chain
+  ansible.builtin.dnf:
+    name: "{{ nvidia_build_packages | default(_nvidia_build_packages) }}"
+    state: present
+
+- name: Provision the NVIDIA CUDA repository
+  ansible.builtin.yum_repository:
+    name: "{{ nvidia_repo_name | default(_nvidia_repo_name) }}"
+    description: "NVIDIA CUDA packages"
+    file: cuda
+    baseurl: "{{ nvidia_repo_baseurl | default(_nvidia_repo_baseurl) }}"
+    gpgcheck: true
+    gpgkey: "{{ nvidia_repo_gpgkey | default(_nvidia_repo_gpgkey) }}"
+    priority: 50
+    enabled: true
+  notify: Clean DNF
+
+# Note, the upstream libnvidia-container repository signs its metadata rather
+# than individual packages, so it requires repo_gpgcheck with gpgcheck off.
+- name: Provision the NVIDIA Container Toolkit repository
+  when: nvidia_container_toolkit_enabled | bool
+  ansible.builtin.yum_repository:
+    name: "{{ nvidia_container_toolkit_repo_name | default(_nvidia_container_toolkit_repo_name) }}"
+    description: "NVIDIA Container Toolkit packages"
+    file: nvidia-container-toolkit
+    baseurl: "{{ nvidia_container_toolkit_repo_baseurl | default(_nvidia_container_toolkit_repo_baseurl) }}"
+    gpgcheck: false
+    repo_gpgcheck: true
+    gpgkey: "{{ nvidia_container_toolkit_repo_gpgkey | default(_nvidia_container_toolkit_repo_gpgkey) }}"
+    priority: 50
+    enabled: true
+  notify: Clean DNF
